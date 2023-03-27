@@ -34,14 +34,14 @@ class Server(BaseHTTPRequestHandler):
                     self.wfile.write(bytes('no', "utf-8"))
                     break
                 if x == len(users) - 1:
-                    self.wfile.write(bytes('ye' + str(x), "utf-8"))
-                    users.append([user_name, pass_word, grade])
+                    users.append([user_name, pass_word, grade, '0'])
+                    self.wfile.write(bytes('ye' + str(x) + '|' + '0', "utf-8"))
                     dbfile = open('userData.text', 'wb')
                     pickle.dump(users, dbfile)
                     dbfile.close()
             if len(users) == 0:
-                self.wfile.write(bytes(str(0) + '|' + '0', "utf-8"))
-                users.append([user_name, pass_word, grade])
+                users.append([user_name, pass_word, grade, '0'])
+                self.wfile.write(bytes('ye' + str(0) + '|' + '0', "utf-8"))
                 dbfile = open('userData.text', 'wb')
                 pickle.dump(users, dbfile)
                 dbfile.close()
@@ -51,14 +51,14 @@ class Server(BaseHTTPRequestHandler):
             pass_word = message[message.find('|') + 1:]
             for x in range(0, len(users)):
                 if user_name == users[x][0] and pass_word == users[x][1]:
-                    self.wfile.write(bytes('ye' + str(x), "utf-8"))
+                    self.wfile.write(bytes('ye' + str(x) + '|' + users[x][3], "utf-8"))
                     break
                 if x == len(users) - 1:
                     self.wfile.write(bytes('no', "utf-8"))
         if objective == 'AP:':  # add points
             userNumber = int(message[3:message.find('|')])
             points = int(message[message.find('|') + 1:])
-            users[userNumber][1] = points
+            users[userNumber][3] = str(points)
             dbfile = open('userData.text', 'wb')
             pickle.dump(users, dbfile)
             dbfile.close()
