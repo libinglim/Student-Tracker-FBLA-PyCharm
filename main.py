@@ -14,16 +14,14 @@ class Server(BaseHTTPRequestHandler):
         self.send_header("Content-type", "text/html")
         self.end_headers()
         content_len = int(self.headers.get('Content-Length'))
-        message = self.rfile.read(content_len).decode('utf-8')
+        message = self.rfile.read(content_len).decode('utf-8') 
         objective = message[0:3]
         print(message)
         users = get_users()
         print(users)
-        if objective == 'GR:':  # get report
-            message2 = ''
-            for x in range(0, len(users)):
-                message2 = message2 + '|' + users[x][0] + '|' + users[x][1]
-            self.wfile.write(bytes(message2, "utf-8"))
+        if objective == 'GU:':  # get username
+            user_number = int(message[3:])
+            self.wfile.write(bytes(users[user_number][0], "utf-8"))
         if objective == 'SU:':  # sign up
             user_name = message[3:message.find('|')]
             parsedMessage = message[message.find('|') + 1:]
@@ -40,7 +38,7 @@ class Server(BaseHTTPRequestHandler):
                     pickle.dump(users, dbfile)
                     dbfile.close()
             if len(users) == 0:
-                users.append([user_name, pass_word, grade, '0'])
+                users.append([user_name, pass_word, grade, '0', ''])
                 self.wfile.write(bytes('ye' + str(0) + '|' + '0', "utf-8"))
                 dbfile = open('userData.text', 'wb')
                 pickle.dump(users, dbfile)
@@ -59,6 +57,28 @@ class Server(BaseHTTPRequestHandler):
             userNumber = int(message[3:message.find('|')])
             points = int(message[message.find('|') + 1:])
             users[userNumber][3] = str(points)
+            dbfile = open('userData.text', 'wb')
+            pickle.dump(users, dbfile)
+            dbfile.close()
+        if objective == 'GR:':  # generate report
+            message2 = ''
+            for x in range(0, len(users)):
+                for y in range(0, 4):
+                    message2 = message2 + users[x][y] + '|'
+            print(users)
+            self.wfile.write(bytes(message2, "utf-8"))
+        if objective == 'AC:':  # add clubs
+            user_number = int(message[3:message.find('|')])
+            users[user_number][4] = ''
+            users[user_number][4] = users[user_number][4] + message[message.find('|') + 1:]
+            dbfile = open('userData.text', 'wb')
+            pickle.dump(users, dbfile)
+            dbfile.close()
+        if objective == 'GC:':  # get clubs
+            user_number = int(message[3:message.find('|')])
+            if len(users[user_number]) == 4:
+                users[user_number].append('')
+            self.wfile.write(bytes(users[user_number][4] + 'a', "utf-8"))
             dbfile = open('userData.text', 'wb')
             pickle.dump(users, dbfile)
             dbfile.close()
