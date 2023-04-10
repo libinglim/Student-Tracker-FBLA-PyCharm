@@ -33,7 +33,7 @@ class Server(BaseHTTPRequestHandler):
                     break
                 if x == len(users) - 1:
                     users.append([user_name, pass_word, grade, '0'])
-                    self.wfile.write(bytes('ye' + str(x) + '|' + '0', "utf-8"))
+                    self.wfile.write(bytes('ye' + str(len(users) - 1) + '|' + '0', "utf-8"))
                     dbfile = open('userData.text', 'wb')
                     pickle.dump(users, dbfile)
                     dbfile.close()
