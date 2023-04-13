@@ -53,10 +53,20 @@ class Server(BaseHTTPRequestHandler):
                     break
                 if x == len(users) - 1:
                     self.wfile.write(bytes('no', "utf-8"))
+        if objective == 'UP:':  # user points
+            userNumber = int(message[3:])
+            self.wfile.write(bytes(users[userNumber][3], "utf-8"))
+
         if objective == 'AP:':  # add points
             userNumber = int(message[3:message.find('|')])
             points = int(message[message.find('|') + 1:])
             users[userNumber][3] = str(points)
+            dbfile = open('userData.text', 'wb')
+            pickle.dump(users, dbfile)
+            dbfile.close()
+        if objective == 'CP:':  # clear points
+            for x in range(0, len(users)):
+                users[x][3] = '0'
             dbfile = open('userData.text', 'wb')
             pickle.dump(users, dbfile)
             dbfile.close()
