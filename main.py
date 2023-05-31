@@ -18,6 +18,10 @@ class Server(BaseHTTPRequestHandler):
         objective = message[0:3]
         print(message)
         users = get_users()
+        for x in range(0, len(users)):
+            if users[x][0] == 'this0':
+                users.pop(x)
+                break
         print(users)
         if objective == 'GU:':  # get username
             user_number = int(message[3:])
