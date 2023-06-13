@@ -16,6 +16,7 @@ class Server(BaseHTTPRequestHandler):
         content_len = int(self.headers.get('Content-Length'))
         message = self.rfile.read(content_len).decode('utf-8') 
         objective = message[0:3]
+
         print(message)
         users = get_users()
         for x in range(0, len(users)):
@@ -57,6 +58,8 @@ class Server(BaseHTTPRequestHandler):
                     break
                 if x == len(users) - 1:
                     self.wfile.write(bytes('no', "utf-8"))
+            if len(users) == 0:
+                self.wfile.write(bytes('no', "utf-8"))
         if objective == 'UP:':  # user points
             userNumber = int(message[3:])
             self.wfile.write(bytes(users[userNumber][3], "utf-8"))
