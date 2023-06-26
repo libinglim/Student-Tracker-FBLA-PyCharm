@@ -18,7 +18,11 @@ class Server(BaseHTTPRequestHandler):
         objective = message[0:3]
 
         print(message)
-        users = get_users()
+        users = get_users();
+
+        dbfile = open('userData.text', 'wb')
+        pickle.dump(users, dbfile)
+        dbfile.close()
         for x in range(0, len(users)):
             if users[x][0] == 'this0':
                 users.pop(x)
@@ -81,7 +85,7 @@ class Server(BaseHTTPRequestHandler):
             message2 = ''
             for x in range(0, len(users)):
                 for y in range(0, 4):
-                    message2 = message2 + users[x][y] + '|'
+                    message2 = message2 + str(users[x][y]) + '|'
             print(users)
             self.wfile.write(bytes(message2, "utf-8"))
         if objective == 'AC:':  # add clubs
